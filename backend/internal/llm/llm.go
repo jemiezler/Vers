@@ -2,11 +2,30 @@ package llm
 
 import (
 	"context"
+	"fmt"
 	"strconv"
+	"strings"
 )
 
 type Client interface {
 	Complete(ctx context.Context, prompt string) (string, error)
+}
+
+type Config struct {
+	Provider    string
+	OllamaURL   string
+	OllamaModel string
+}
+
+func NewClient(cfg Config) (Client, error) {
+	switch strings.ToLower(cfg.Provider) {
+	case "", "stub":
+		return NewStubClient(), nil
+	case "ollama":
+		return NewOllamaClient(cfg.OllamaURL, cfg.OllamaModel), nil
+	default:
+		return nil, fmt.Errorf("unsupported llm provider %q", cfg.Provider)
+	}
 }
 
 type StubClient struct{}

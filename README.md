@@ -60,6 +60,33 @@ cd backend
 go run ./cmd/api
 ```
 
+### LLM Configuration
+
+By default the backend uses a stub LLM (`VERS_LLM_PROVIDER=stub`). To use Ollama:
+
+```sh
+VERS_LLM_PROVIDER=ollama
+VERS_OLLAMA_URL=http://localhost:11434
+VERS_OLLAMA_MODEL=gemma3
+```
+
+PowerShell example:
+
+```powershell
+$env:VERS_LLM_PROVIDER="ollama"
+$env:VERS_OLLAMA_URL="http://localhost:11434"
+$env:VERS_OLLAMA_MODEL="gemma3"
+```
+
+### Docs Configuration
+
+By default the backend uses placeholder docs (`VERS_DOCS_PROVIDER=stub`). To fetch Go docs from pkg.go.dev for `go.mod` dependencies:
+
+```powershell
+$env:VERS_DOCS_PROVIDER="pkg_go_dev"
+$env:VERS_PKG_GO_DEV_URL="https://pkg.go.dev"
+```
+
 Run the frontend:
 
 ```sh

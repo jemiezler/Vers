@@ -57,11 +57,26 @@ func TestCreateReview(t *testing.T) {
 	if result.Manifest.Dependencies[0].Name != "github.com/gin-gonic/gin" {
 		t.Fatalf("dependency name = %q, want github.com/gin-gonic/gin", result.Manifest.Dependencies[0].Name)
 	}
+	if len(result.Context.Dependencies) != 1 {
+		t.Fatalf("context dependency count = %d, want 1", len(result.Context.Dependencies))
+	}
+	if len(result.Context.Dependencies[0].Docs) != 1 {
+		t.Fatalf("doc chunk count = %d, want 1", len(result.Context.Dependencies[0].Docs))
+	}
+	if result.Context.Dependencies[0].Docs[0].Source == "" {
+		t.Fatal("doc chunk source is empty")
+	}
+	if result.Context.Dependencies[0].Docs[0].Text == "" {
+		t.Fatal("doc chunk text is empty")
+	}
 	if result.Prompt == "" {
 		t.Fatal("prompt is empty")
 	}
 	if result.Review == "" {
 		t.Fatal("review is empty")
+	}
+	if result.LLM == "" {
+		t.Fatal("llmProvider is empty")
 	}
 }
 

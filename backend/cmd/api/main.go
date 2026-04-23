@@ -11,7 +11,10 @@ import (
 
 func main() {
 	cfg := config.Load()
-	service := review.NewService()
+	service, err := review.NewServiceFromConfig(cfg)
+	if err != nil {
+		log.Fatalf("configure review service: %v", err)
+	}
 	handler := dashboardhttp.NewHandler(service)
 
 	mux := http.NewServeMux()

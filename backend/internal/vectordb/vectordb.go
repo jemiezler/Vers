@@ -5,6 +5,7 @@ import "vers/backend/internal/ingestion/embedder"
 type Chunk struct {
 	Library string             `json:"library"`
 	Version string             `json:"version"`
+	Source  string             `json:"source"`
 	Text    string             `json:"text"`
 	Vector  embedder.Embedding `json:"-"`
 }

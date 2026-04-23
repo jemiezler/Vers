@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"vers/backend/internal/config"
 	"vers/backend/internal/contextbuilder"
 	"vers/backend/internal/ingestion/converter"
 	"vers/backend/internal/ingestion/embedder"
@@ -25,21 +26,58 @@ type Result struct {
 	Context  contextbuilder.ReviewContext `json:"context"`
 	Prompt   string                       `json:"prompt"`
 	Review   string                       `json:"review"`
+	LLM      string                       `json:"llmProvider"`
 }
 
 type Service struct {
 	fetcher  *fetcher.Fetcher
 	embedder *embedder.Embedder
-	store    *vectordb.MemoryStore
 	llm      llm.Client
+	llmName  string
 }
 
 func NewService() *Service {
+	service, err := NewServiceFromConfig(config.Load())
+	if err != nil {
+		return NewServiceWithLLM(
+			"stub",
+			llm.NewStubClient(),
+			fetcher.New(fetcher.Config{DocsProvider: "stub"}),
+		)
+	}
+
+	return service
+}
+
+func NewServiceFromConfig(cfg config.Config) (*Service, error) {
+	client, err := llm.NewClient(llm.Config{
+		Provider:    cfg.LLMProvider,
+		OllamaURL:   cfg.OllamaURL,
+		OllamaModel: cfg.OllamaModel,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	name := cfg.LLMProvider
+	if name == "" {
+		name = "stub"
+	}
+
+	docsFetcher := fetcher.New(fetcher.Config{
+		DocsProvider: cfg.DocsProvider,
+		PkgGoDevURL:  cfg.PkgGoDevURL,
+	})
+
+	return NewServiceWithLLM(name, client, docsFetcher), nil
+}
+
+func NewServiceWithLLM(name string, client llm.Client, docsFetcher *fetcher.Fetcher) *Service {
 	return &Service{
-		fetcher:  fetcher.New(),
+		fetcher:  docsFetcher,
 		embedder: embedder.New(),
-		store:    vectordb.NewMemoryStore(),
-		llm:      llm.NewStubClient(),
+		llm:      client,
+		llmName:  name,
 	}
 }
 
@@ -53,21 +91,28 @@ func (s *Service) Run(ctx context.Context, req Request) (Result, error) {
 		return Result{}, err
 	}
 
-	docs := make(map[string][]string, len(manifest.Dependencies))
+	// Keep the scaffold request-scoped so repeated calls don't duplicate docs.
+	store := vectordb.NewMemoryStore()
+
+	docs := make(map[string][]contextbuilder.DocChunk, len(manifest.Dependencies))
 	for _, dep := range manifest.Dependencies {
 		doc := s.fetcher.Fetch(dep)
 		relevant := scraper.ExtractRelevant(doc)
 		markdown := converter.ToMarkdown(relevant)
 		vector := s.embedder.Embed(markdown)
-		s.store.Add(vectordb.Chunk{
+		store.Add(vectordb.Chunk{
 			Library: dep.Name,
 			Version: dep.Version,
+			Source:  doc.URL,
 			Text:    markdown,
 			Vector:  vector,
 		})
 
-		for _, chunk := range s.store.Search(dep.Name) {
-			docs[dep.Name] = append(docs[dep.Name], chunk.Text)
+		for _, chunk := range store.Search(dep.Name) {
+			docs[dep.Name] = append(docs[dep.Name], contextbuilder.DocChunk{
+				Source: chunk.Source,
+				Text:   chunk.Text,
+			})
 		}
 	}
 
@@ -83,5 +128,6 @@ func (s *Service) Run(ctx context.Context, req Request) (Result, error) {
 		Context:  reviewContext,
 		Prompt:   prompt,
 		Review:   response,
+		LLM:      s.llmName,
 	}, nil
 }
