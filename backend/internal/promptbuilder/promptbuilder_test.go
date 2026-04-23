@@ -3,8 +3,8 @@ package promptbuilder
 import (
 	"testing"
 
-	"vers/backend/internal/contextbuilder"
-	"vers/backend/internal/parser"
+	"github.com/jemiezler/Vers/backend/internal/contextbuilder"
+	"github.com/jemiezler/Vers/backend/internal/parser"
 )
 
 func TestBuild_AsciiOnly(t *testing.T) {

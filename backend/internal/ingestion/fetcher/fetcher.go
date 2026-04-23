@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"vers/backend/internal/parser"
+	"github.com/jemiezler/Vers/backend/internal/parser"
 )
 
 type Document struct {

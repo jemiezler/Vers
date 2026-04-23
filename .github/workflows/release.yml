@@ -1,0 +1,52 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            ext: ""
+          - goos: linux
+            goarch: arm64
+            ext: ""
+          - goos: darwin
+            goarch: amd64
+            ext: ""
+          - goos: darwin
+            goarch: arm64
+            ext: ""
+          - goos: windows
+            goarch: amd64
+            ext: ".exe"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.x"
+          cache: true
+          cache-dependency-path: backend/go.mod
+
+      - name: Build
+        shell: bash
+        run: |
+          mkdir -p dist
+          cd backend
+          GOOS="${{ matrix.goos }}" GOARCH="${{ matrix.goarch }}" go build -trimpath -ldflags "-s -w" -o "../dist/vers-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}" ./cmd/vers
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*

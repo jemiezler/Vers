@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"vers/backend/internal/config"
-	dashboardhttp "vers/backend/internal/dashboard/http"
-	"vers/backend/internal/review"
+	"github.com/jemiezler/Vers/backend/internal/config"
+	dashboardhttp "github.com/jemiezler/Vers/backend/internal/dashboard/http"
+	"github.com/jemiezler/Vers/backend/internal/review"
 )
 
 func main() {

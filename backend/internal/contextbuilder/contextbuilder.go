@@ -1,6 +1,6 @@
 package contextbuilder
 
-import "vers/backend/internal/parser"
+import "github.com/jemiezler/Vers/backend/internal/parser"
 
 type DocChunk struct {
 	Source string `json:"source"`

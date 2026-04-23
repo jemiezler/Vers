@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"vers/backend/internal/review"
+	"github.com/jemiezler/Vers/backend/internal/review"
 )
 
 type Handler struct {

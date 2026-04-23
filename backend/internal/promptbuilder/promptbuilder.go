@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"vers/backend/internal/contextbuilder"
+	"github.com/jemiezler/Vers/backend/internal/contextbuilder"
 )
 
 func Build(ctx contextbuilder.ReviewContext) string {

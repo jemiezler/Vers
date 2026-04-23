@@ -1,0 +1,35 @@
+name: vers-scan
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.x"
+          cache: true
+          cache-dependency-path: backend/go.mod
+
+      - name: Test
+        run: go test ./...
+
+      - name: Scan (stub providers)
+        env:
+          VERS_LLM_PROVIDER: stub
+          VERS_DOCS_PROVIDER: stub
+        run: go run ./cmd/vers scan .. --output ../vers-report.json --max-files 200
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: vers-report
+          path: vers-report.json

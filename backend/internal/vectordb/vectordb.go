@@ -1,6 +1,6 @@
 package vectordb
 
-import "vers/backend/internal/ingestion/embedder"
+import "github.com/jemiezler/Vers/backend/internal/ingestion/embedder"
 
 type Chunk struct {
 	Library string             `json:"library"`

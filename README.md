@@ -95,4 +95,23 @@ npm install
 npm run dev
 ```
 
+## CI / Batch Scan
+
+Run a repo-wide scan and emit a JSON report:
+
+```sh
+cd backend
+go run ./cmd/vers scan .. --output ../vers-report.json
+```
+
+GitHub Actions workflow: `.github/workflows/vers-scan.yml`.
+
+## Install CLI
+
+After you tag a release (example `v0.1.0`), install with:
+
+```sh
+go install github.com/jemiezler/Vers/backend/cmd/vers@v0.1.0
+```
+
 The scaffold uses stub document fetching, in-memory vector storage, and a stub LLM client. Replace those modules with Qdrant/Chroma and Ollama/vLLM integrations as the pipeline matures.

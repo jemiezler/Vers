@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"vers/backend/internal/review"
+	"github.com/jemiezler/Vers/backend/internal/review"
 )
 
 func TestHealth(t *testing.T) {

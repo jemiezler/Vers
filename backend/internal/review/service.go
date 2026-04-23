@@ -4,16 +4,16 @@ import (
 	"context"
 	"errors"
 
-	"vers/backend/internal/config"
-	"vers/backend/internal/contextbuilder"
-	"vers/backend/internal/ingestion/converter"
-	"vers/backend/internal/ingestion/embedder"
-	"vers/backend/internal/ingestion/fetcher"
-	"vers/backend/internal/ingestion/scraper"
-	"vers/backend/internal/llm"
-	"vers/backend/internal/parser"
-	"vers/backend/internal/promptbuilder"
-	"vers/backend/internal/vectordb"
+	"github.com/jemiezler/Vers/backend/internal/config"
+	"github.com/jemiezler/Vers/backend/internal/contextbuilder"
+	"github.com/jemiezler/Vers/backend/internal/ingestion/converter"
+	"github.com/jemiezler/Vers/backend/internal/ingestion/embedder"
+	"github.com/jemiezler/Vers/backend/internal/ingestion/fetcher"
+	"github.com/jemiezler/Vers/backend/internal/ingestion/scraper"
+	"github.com/jemiezler/Vers/backend/internal/llm"
+	"github.com/jemiezler/Vers/backend/internal/parser"
+	"github.com/jemiezler/Vers/backend/internal/promptbuilder"
+	"github.com/jemiezler/Vers/backend/internal/vectordb"
 )
 
 type Request struct {
